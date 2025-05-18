@@ -1,65 +1,66 @@
-import logo from './logo.svg';
-import './App.css';
-import { useEffect, useRef, useState } from "react";
+import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import EmployeesForm from './components/EmployeesForm';
+import EmployeesList from './components/EmployeesList';
+import Navbar from './components/NavBar';
 
-function diffLists(oldList, newList) {
-  const diffs = [];
-  const length = Math.max(oldList.length, newList.length);
+// Log changes directly related to data
+const logChange = (action, before, after = null) => {
+    console.log(`${action}:`);
+    if(before) console.log('Before:', before);
+    if(after) console.log('After:', after);
+};
 
-  for (let i = 0; i < length; i++) {
-    const oldItem = oldList[i];
-    const newItem = newList[i];
+// App Component
+function App() {
+    const [employees, setEmployees] = useState([]);
+    const [currentEmployee, setCurrentEmployee] = useState(null);
 
-    if (oldItem === undefined) {
-      diffs.push({ type: "add", content: newItem });
-    } else if (newItem === undefined) {
-      diffs.push({ type: "remove", content: oldItem });
-    } else if (oldItem !== newItem) {
-      diffs.push({ type: "update", from: oldItem, to: newItem });
-    }
-  }
-  return diffs;
-  }
+    const addEmployee = (emp) => {
+        setEmployees((prev) => {
+          const newEmployees = [...prev, emp];
+          logChange('Added Employee', null, emp);
+          return newEmployees;
+        });
+    };
 
-  function App() {
-  const [list, setList] = useState(["KTPM", "CNTT", "HTTT", "ATTT"]);
-  const prevListRef = useRef(list);
+    const updateEmployee = (updated) => {
+        setEmployees((prev) => {
+          const before = prev.find(emp => emp.id === updated.id);
+          const newEmployees = prev.map((emp) => emp.id === updated.id ? updated : emp);
+          logChange('Updated Employee', before, updated);
+          return newEmployees;
+        });
+    };
 
-  useEffect(() => {
-    const prevList = prevListRef.current;
-    const diff = diffLists(prevList, list);
-    console.log("Diff:", diff);
-    prevListRef.current = list;
-  }, [list]);
+    const deleteEmployee = (id) => {
+        setEmployees((prev) => {
+            const empToDelete = prev.find((emp) => emp.id === id);
+            const newEmployees = prev.filter((emp) => emp.id !== id);
+            logChange('Deleted Employee', empToDelete, null);
+            return newEmployees;
+        });
+    };
 
-  const addItem = () => {
-    setList((prev) => [...prev, `Item ${prev.length + 1}`]);
-  };
+    const editEmployee = (emp) => setCurrentEmployee(emp);
 
-  const removeItem = () => {
-    setList((prev) => prev.slice(0, -1));
-  };
-
-  const updateItem = () => {
-    if (list.length === 0) return;
-    const index = Math.floor(Math.random() * list.length);
-    const newList = [...list];
-    newList[index] = `Updated ${Math.floor(Math.random() * 100)}`;
-    setList(newList);
-  };
-
-  return (
-    <div className="App" style={{ padding: 20 }}>
-      <h2>Danh sách</h2>
-      <ul style={{ listStyleType: "order", padding: 0 }}>
-        {list.map((item, i) => (
-          <li key={i}>{item}</li>
-        ))}
-      </ul>
-      <button onClick={addItem}>Thêm</button>
-      <button onClick={removeItem}>Xoá</button>
-      <button onClick={updateItem}>Cập nhật</button>
-    </div>
-  );
+    return (
+      <div>
+        <Navbar />
+        <div className="container mt-5">
+            <h2>Employee Manager with Direct Change Log</h2>
+            <EmployeesForm
+                onAdd={addEmployee}
+                onUpdate={updateEmployee}
+                currentEmployee={currentEmployee}
+                onCancel={() => setCurrentEmployee(null)}
+            />
+            <div id="employee-list">
+                <EmployeesList employees={employees} onEdit={editEmployee} onDelete={deleteEmployee} />
+            </div>
+        </div>
+      </div>
+    );
 }
+
 export default App;
