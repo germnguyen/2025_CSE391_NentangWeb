@@ -6,6 +6,8 @@ function EmployeeForm({ onAdd, onUpdate, currentEmployee, onCancel }) {
     useEffect(() => {
         if (currentEmployee) {
             setEmployee(currentEmployee);
+        }else{
+            setEmployee({ name: '', email: '', phone: '', position: '' });
         }
     }, [currentEmployee]);
 
@@ -22,6 +24,9 @@ function EmployeeForm({ onAdd, onUpdate, currentEmployee, onCancel }) {
             onAdd({ ...employee, id: Date.now() });
         }
         setEmployee({ name: '', email: '', phone: '', position: '' });
+        if (onCancel) {
+            onCancel();
+        }
     };
 
     return (
