@@ -1,4 +1,6 @@
 // cơ chế chuyển đổi JSXJSX
+
+// https://babeljs.io/ su dung Babel để chuyển đổi JSX thành JS
 // Code JSX
     function formatName(user){
     return user.firstName + ' ' + user.lastName;
