@@ -18,6 +18,8 @@ function App() {
         const data = localStorage.getItem('employees');
         return data ? JSON.parse(data) : [];
     });
+
+    
     const [currentEmployee, setCurrentEmployee] = useState(null);
     const [showModal, setShowModal]  = useState(false);
 
@@ -38,11 +40,11 @@ function App() {
         });
     };
 
-    const updateEmployee = (updated) => {
+    const updateEmployee = (emUpdated) => {
         setEmployees((prev) => {
-          const before = prev.find(emp => emp.id === updated.id);
-          const newEmployees = prev.map((emp) => emp.id === updated.id ? updated : emp);
-          logChange('Updated Employee', before, updated);
+          const before = prev.find(emp => emp.id === emUpdated.id);
+          const newEmployees = prev.map((emp) => emp.id === emUpdated.id ? emUpdated : emp);
+          logChange('Updated Employee', before, emUpdated);
           return newEmployees;
         });
     };
